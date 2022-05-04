@@ -370,6 +370,7 @@ public class ExcelHandler {
             basicCellStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER);
             basicCellStyle.setVerticalAlignment(HSSFCellStyle.VERTICAL_CENTER);
             basicCellStyle.setWrapText(true);
+            anotherOne = false;
         }
         return basicCellStyle;
     }
