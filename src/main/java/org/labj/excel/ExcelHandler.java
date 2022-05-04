@@ -37,6 +37,11 @@ public class ExcelHandler {
     private static final Logger LOGGER = Logger.getLogger(ExcelHandler.class.getName());
     private static final int MAX_ROW_NUMBER = 65530;
     private static HSSFCellStyle basicCellStyle;
+    /**
+     * 多次导出时，使用的basicCellStyle始终都是第一个工作簿的，setCellStyle()会抛出异常
+     * 所以添加一个标记位，每次调用exportExcel()方法时，重置为true，然后重新创建basicCellStyle
+     */
+    private static boolean anotherOne = false;
 
     /**
      * 将Excel转换为对象集合
@@ -84,6 +89,7 @@ public class ExcelHandler {
      * @param selectListMap 转义字段
      */
     public static <T> void exportExcel(OutputStream outputStream, List<T> dataList, Class<T> clazz, Map<Integer, Map<String, String>> selectListMap) {
+        anotherOne = true;
         if (!clazz.isAnnotationPresent(EnableExport.class))
             throw new RuntimeException(clazz + "can't be exported to excel file.");
 
@@ -355,7 +361,7 @@ public class ExcelHandler {
      * @return 基本单元格样式
      */
     private static HSSFCellStyle getBasicCellStyle(HSSFWorkbook workbook) {
-        if (basicCellStyle == null) {
+        if (basicCellStyle == null || anotherOne) {
             basicCellStyle = workbook.createCellStyle();
             basicCellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);
             basicCellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN);
